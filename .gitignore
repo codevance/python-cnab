@@ -1,0 +1,11 @@
+.DS_Store
+.env
+.idea
+*pyc
+__pycache__
+.ipynb_checkpoints/
+.coverage
+.venv/
+.pytest_cache
+notebook_test/
+

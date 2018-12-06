@@ -1,32 +1,66 @@
-from cnab240.cnab_itau import Itau
+from types import SimpleNamespace
 
-ITAU = '341'
+from cnab240.cnabitau import Itau
+
+ITAU = '212'
 BRASIL = '001'
 ORIGINAL = '212'
-BANKS = (ITAU, BRASIL, ORIGINAL)
 
 
 class Cnab240:
-    def __init__(self, file_name, bank):
+    '''
+    classe para leitura do arquivo padrao CNAB240 - SISPAG
+    :param file_name: nome do arquivo
+    '''
 
-        if not bank in BANKS:
-            raise ValueError()
-
-        self.file_name = file_name
-        self.bank = bank
+    def __init__(self, arquivo):
+        self.arquivo = arquivo
 
         try:
-            file = open(self.file_name, 'r')
+            f = open(self.arquivo, 'r')
         except FileNotFoundError:
-            raise FileNotFoundError('File {} not found.'.format(file_name))
+            raise FileNotFoundError('File {} not found.'.format(arquivo))
+        except ValueError as e:
+            raise ValueError(str(e))
 
-        self.lines = file.readlines()
-        file.close()
+        self.lines = f.readlines()
+        f.close()
 
-        self.header = self.__header(self.lines[0])
+        self.codigo_banco = self.__codigo_banco(self.lines[0])
+
+    def processar(self):
+        header = None
+        header_lote = None
+        registro_a = []
+        for l in self.lines:
+            tipo_registro = self.__tipo_registro(l)
+            if tipo_registro == '0':
+                header = SimpleNamespace(header=self.__header(l))
+            elif tipo_registro == '1':
+                header_lote = SimpleNamespace(header_lote=self.__header_lote(l))
+            elif tipo_registro == 'A':
+                pass
+
+    def __tipo_registro(self, line):
+        return line[7:8]
+
+    def __codigo_banco(self, line):
+        return line[0:3]
 
     def __header(self, line):
-        if self.bank == ITAU:
+        if self.codigo_banco == ITAU:
             return Itau.header(line)
+        else:
+            raise NotImplementedError
+
+    def __header_lote(self, line):
+        if self.codigo_banco == ITAU:
+            return Itau.header_lote(line)
+        else:
+            raise NotImplementedError
+
+    def __registro_a(self, line):
+        if self.codigo_banco == ITAU:
+            return Itau.registroA(line)
         else:
             raise NotImplementedError
