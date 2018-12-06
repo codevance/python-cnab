@@ -1,33 +1,9 @@
 from types import SimpleNamespace
 
-import pytest
-from cnab240.cnab240 import Cnab240
+from cnab240.cnab240Original import Original
 
 
-def test_parameter():
-    with pytest.raises(TypeError) as e:
-        Cnab240()
-        if not (str(e.value)) == "__init__() missing 1 required positional arguments: 'file_name'":
-            AssertionError()
-
-    with pytest.raises(FileNotFoundError):
-        Cnab240('test.txt')
-
-
-def test_tipo_registro(cnab240):
-    assert cnab240._Cnab240__tipo_registro('00000001') == '1'
-
-
-def test_codigo_banco(cnab240):
-    assert cnab240._Cnab240__codigo_banco('00000001') == '000'
-
-
-def test_header_not_implemented(cnab240_not_implemented):
-    with pytest.raises(NotImplementedError):
-        cnab240_not_implemented._Cnab240__header('000')
-
-
-def test_header(cnab240):
+def test_header():
     data = '21200000         29999999999999929                  00001 0000009999999 xxxxxxxxxxxxxxxxxxxx          BANCO ORIGINAL                          114092018000000001212100                                                                          '
     expect = SimpleNamespace(
         cnpj='99999999999999',
@@ -46,14 +22,14 @@ def test_header(cnab240):
         tipo_registro='0',
         versao_layout='   '
     )
-    assert cnab240._Cnab240__header(data) == expect
+    assert Original().header(data) == expect
 
 
-def test_header_lote(cnab240):
-    data = '21200011C2041045 203941052000150                    00001 0000009474544 ALIBEM ALIMENTOS S/A                                                                                                                                                    '
+def test_header_lote():
+    data = '21200011C2041045 200000000000000                    00001 0000009474544 xxxxxxxxxxxxxxxxxxxx                                                                                                                                                    '
     expect = SimpleNamespace(cep='        ',
                              cidade='                    ',
-                             cnpj='03941052000150',
+                             cnpj='00000000000000',
                              codigo_banco='212',
                              codigo_lote='0001',
                              complemento='               ',
@@ -65,7 +41,7 @@ def test_header_lote(cnab240):
                              forma_pagamento='41',
                              ident_extrado='    ',
                              logradouro='                              ',
-                             nome_empresa='ALIBEM ALIMENTOS S/A          ',
+                             nome_empresa='xxxxxxxxxxxxxxxxxxxx          ',
                              nro_agencia_debitada='00001',
                              nro_conta_debitada='000000947454',
                              numero='     ',
@@ -75,15 +51,10 @@ def test_header_lote(cnab240):
                              tipo_registro='1',
                              versao_layout='045',
                              )
-    assert cnab240._Cnab240__header_lote(data) == expect
+    assert Original().header_lote(data) == expect
 
 
-def test_header_lote_not_implemented(cnab240_not_implemented):
-    with pytest.raises(NotImplementedError):
-        cnab240_not_implemented._Cnab240__header_lote('000')
-
-
-def test_registro_a(cnab240):
+def test_registro_a():
     data = '2120001300002A0     21200001 0000000659657 xxxxxxxxxxxxxxxxxxxxxxxxxxx   12122               17092018BRL               000000000050000                                                                     000000000000002                      '
     expect = SimpleNamespace(agencia_conta_favorecido='00001 0000000659657 ',
                              aviso_ao_favorecido=' ',
@@ -109,13 +80,4 @@ def test_registro_a(cnab240):
                              valor_real_pagto='               '
                              )
 
-    assert cnab240._Cnab240__registro_a(data) == expect
-
-
-def test_registro_a_not_implemented(cnab240_not_implemented):
-    with pytest.raises(NotImplementedError):
-        cnab240_not_implemented._Cnab240__registro_a('000')
-
-
-def test_processar(cnab240):
-    pass
+    assert Original().registro_a(data) == expect

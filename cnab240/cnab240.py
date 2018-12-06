@@ -1,7 +1,7 @@
 from types import SimpleNamespace
 
-from cnab240.cnabitau import Itau
-from cnab240.cnaboriginal import Original
+from cnab240.cnab240Itau import Itau
+from cnab240.cnab240Original import Original
 
 ITAU = '341'
 BRASIL = '001'
@@ -11,7 +11,7 @@ ORIGINAL = '212'
 class Cnab240:
     '''
     classe para leitura do arquivo padrao CNAB240 - SISPAG
-    :param file_name: nome do arquivo
+    :param arquivo: nome do arquivo
     '''
 
     def __init__(self, arquivo):
@@ -34,12 +34,13 @@ class Cnab240:
         header_lote = None
         registro_a = []
         for l in self.lines:
+
             tipo_registro = self.__tipo_registro(l)
             if tipo_registro == '0':
                 header = self.__header(l)
             elif tipo_registro == '1':
                 header_lote = self.__header_lote(l)
-            elif tipo_registro == 'A':
+            elif tipo_registro == '3':
                 registro_a.append(self.__registro_a(l))
         return SimpleNamespace(
             header=header,
