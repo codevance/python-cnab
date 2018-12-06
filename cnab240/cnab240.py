@@ -1,8 +1,9 @@
 from types import SimpleNamespace
 
 from cnab240.cnabitau import Itau
+from cnab240.cnaboriginal import Original
 
-ITAU = '212'
+ITAU = '341'
 BRASIL = '001'
 ORIGINAL = '212'
 
@@ -35,11 +36,16 @@ class Cnab240:
         for l in self.lines:
             tipo_registro = self.__tipo_registro(l)
             if tipo_registro == '0':
-                header = SimpleNamespace(header=self.__header(l))
+                header = self.__header(l)
             elif tipo_registro == '1':
-                header_lote = SimpleNamespace(header_lote=self.__header_lote(l))
+                header_lote = self.__header_lote(l)
             elif tipo_registro == 'A':
-                pass
+                registro_a.append(self.__registro_a(l))
+        return SimpleNamespace(
+            header=header,
+            header_lote=header_lote,
+            registros_a=registro_a,
+        )
 
     def __tipo_registro(self, line):
         return line[7:8]
@@ -50,17 +56,23 @@ class Cnab240:
     def __header(self, line):
         if self.codigo_banco == ITAU:
             return Itau.header(line)
+        elif self.codigo_banco == ORIGINAL:
+            return Original.header(line)
         else:
             raise NotImplementedError
 
     def __header_lote(self, line):
         if self.codigo_banco == ITAU:
             return Itau.header_lote(line)
+        elif self.codigo_banco == ORIGINAL:
+            return Original.header_lote(line)
         else:
             raise NotImplementedError
 
     def __registro_a(self, line):
         if self.codigo_banco == ITAU:
-            return Itau.registroA(line)
+            return Itau.registro_a(line)
+        elif self.codigo_banco == ORIGINAL:
+            return Original.registro_a(line)
         else:
             raise NotImplementedError

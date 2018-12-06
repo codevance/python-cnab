@@ -1,7 +1,7 @@
 from types import SimpleNamespace
 
 
-class Itau:
+class Original:
     @staticmethod
     def header(line):
         return SimpleNamespace(

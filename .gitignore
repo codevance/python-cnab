@@ -8,4 +8,5 @@ __pycache__
 .venv/
 .pytest_cache
 notebook_test/
+cnab240/tests/test.txt
 
