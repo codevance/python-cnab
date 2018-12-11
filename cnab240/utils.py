@@ -4,9 +4,9 @@ from decimal import Decimal, InvalidOperation
 
 def format_date(date_str):
     '''
-
-    :param date_str:
-    :return:
+    format date
+    :param date_str: date in the format ddmmyyyy
+    :return: datetime
     '''
     if not isinstance(date_str, str):
         raise ValueError
@@ -21,9 +21,9 @@ def format_date(date_str):
 
 def format_currency(value_str):
     '''
-
-    :param value:
-    :return:
+    format currency value
+    :param value: value in format 0000000000 to two decimal places
+    :return: Decimal
     '''
     if not isinstance(value_str, str):
         raise ValueError

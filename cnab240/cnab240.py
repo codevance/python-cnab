@@ -10,70 +10,69 @@ ORIGINAL = '212'
 
 class Cnab240:
     '''
-    classe para leitura do arquivo padrao CNAB240 - SISPAG
-    :param arquivo: nome do arquivo
+    class for reading the file CNAB240 - SISPAG
+    :param file: file name
     '''
 
-    def __init__(self, arquivo):
-        self.arquivo = arquivo
+    def __init__(self, file):
+        self.file = file
 
         try:
-            f = open(self.arquivo, 'r')
+            f = open(self.file, 'r')
         except FileNotFoundError:
-            raise FileNotFoundError('File {} not found.'.format(arquivo))
+            raise FileNotFoundError('File {} not found.'.format(file))
         except ValueError as e:
             raise ValueError(str(e))
 
         self.lines = f.readlines()
         f.close()
 
-        self.codigo_banco = self.__codigo_banco(self.lines[0])
+        self.code_bank = self.__code_bank(self.lines[0])
 
-    def processar(self):
+    def process(self):
         header = None
         header_lote = None
-        registro_a = []
+        record_a = []
         for l in self.lines:
-
-            tipo_registro = self.__tipo_registro(l)
-            if tipo_registro == '0':
+            record_type = self.__record_type(l)
+            if record_type == '0':
                 header = self.__header(l)
-            elif tipo_registro == '1':
+            elif record_type == '1':
                 header_lote = self.__header_lote(l)
-            elif tipo_registro == '3':
-                registro_a.append(self.__registro_a(l))
+            elif record_type == '3':
+                record_a.append(self.__record_a(l))
         return SimpleNamespace(
             header=header,
             header_lote=header_lote,
-            registros_a=registro_a,
+            record_a=record_a,
         )
 
-    def __tipo_registro(self, line):
+    def __record_type(self, line):
         return line[7:8]
 
-    def __codigo_banco(self, line):
+    def __code_bank(self, line):
         return line[0:3]
 
     def __header(self, line):
-        if self.codigo_banco == ITAU:
+        if self.code_bank == ITAU:
             return Itau.header(line)
-        elif self.codigo_banco == ORIGINAL:
+        elif self.code_bank == ORIGINAL:
             return Original.header(line)
         else:
             raise NotImplementedError
 
     def __header_lote(self, line):
-        if self.codigo_banco == ITAU:
+        if self.code_bank == ITAU:
             return Itau.header_lote(line)
-        elif self.codigo_banco == ORIGINAL:
+        elif self.code_bank == ORIGINAL:
             return Original.header_lote(line)
         else:
             raise NotImplementedError
 
-    def __registro_a(self, line):
-        if self.codigo_banco == ITAU:
-            return Itau.registro_a(line)
-        elif self.codigo_banco == ORIGINAL:
-            return Original.registro_a(line)
+    def __record_a(self, line):
+        if self.code_bank == ITAU:
+            return Itau.record_a(line)
+        elif self.code_bank == ORIGINAL:
+            return Original.record_a(line)
         else:
             raise NotImplementedError
