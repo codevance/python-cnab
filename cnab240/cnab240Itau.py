@@ -93,3 +93,6 @@ class Itau:
             aviso_ao_favorecido=line[229:230],
             codigo_ocorrencias=line[230:240],
         )
+
+    format_date = lambda d: '{year}-{month}-{day}'.format(day = d[0:2], month = d[2:4], year = d[4:8])
+
