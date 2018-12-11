@@ -11,10 +11,12 @@ setup(name='python-cnab',
       author="codevance",
       author_email="contato@codevance.com.br",
       license="MIT",
-      py_modules=['python-cnab'],
+      packages=[
+            'cnab240'
+      ],
+      include_package_data=True,
       zip_safe=False,
       platforms='any',
       tests_require=['pytest', 'pytest-coverage'],
       test_suite='tests',
-      include_package_data=True,
       url='https://github.com/codevance/python-cnab', )
