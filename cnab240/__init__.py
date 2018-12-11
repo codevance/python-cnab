@@ -1,1 +1,0 @@
-from cnab240 import Cnab240
