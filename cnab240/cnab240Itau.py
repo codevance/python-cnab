@@ -1,17 +1,25 @@
 from types import SimpleNamespace
 from cnab240.utils import format_date, format_currency
 
+
 class Itau:
     @staticmethod
     def header(line):
+        type_doc = line[17:18].strip(' ')
+        document = line[18:32].strip(' ')
+        if type_doc == '1':  # cpf
+            document = document[-11:]
+        elif type_doc == '2':  # cnpj
+            document = document[-14:]
+
         return SimpleNamespace(
             codigo_banco=line[0:3].strip(' '),
             codigo_lote=line[3:7].strip(' '),
             tipo_registro=line[7:8].strip(' '),
             # brancos = line[8:14],
             versao_layout=line[14:17].strip(' '),
-            tipo_doc=line[17:18].strip(' '),
-            cnpj=line[18:32].strip(' '),
+            tipo_inscricao=type_doc,
+            cnpj_cpf=document,
             # brancos = line[32:52],
             nro_agencia_debitada=line[52:57].strip(' '),
             # brancos = line[57:58],
@@ -31,6 +39,12 @@ class Itau:
 
     @staticmethod
     def header_lote(line):
+        type_doc = line[17:18].strip(' ')
+        document = line[18:32].strip(' ')
+        if type_doc == '1':  # cpf
+            document = document[-11:]
+        elif type_doc == '2':  # cnpj
+            document = document[-14:]
         return SimpleNamespace(
             codigo_banco=line[0:3].strip(' '),
             codigo_lote=line[3:7].strip(' '),
@@ -40,8 +54,8 @@ class Itau:
             forma_pagamento=line[11:13].strip(' '),
             versao_layout=line[13:16].strip(' '),
             # brancos = line[16:17],
-            tipo_inscricao=line[17:18].strip(' '),
-            cnpj=line[18:32].strip(' '),
+            tipo_inscricao=type_doc,
+            cnpj_cpf=document,
             ident_extrado=line[32:36].strip(' '),
             complemento_ident=line[36:52].strip(' '),
             nro_agencia_debitada=line[52:57].strip(' '),
@@ -64,6 +78,12 @@ class Itau:
 
     @staticmethod
     def record_a(line):
+        type_doc = line[217:218].strip(' ')
+        document = line[203:217].strip(' ')
+        if type_doc == '1':  # cpf
+            document = document[-11:]
+        elif type_doc == '2':  # cnpj
+            document = document[-14:]
         return SimpleNamespace(
             codigo_banco=line[0:3].strip(' '),
             codigo_lote=line[3:7].strip(' '),
@@ -71,25 +91,25 @@ class Itau:
             nro_registro=line[8:13].strip(' '),
             segmento=line[13:14].strip(' '),
             tipo_movimento=line[14:17].strip(' '),
-            #complemento=line[17:20],
+            # complemento=line[17:20],
             codigo_banco_favorecido=line[20:23].strip(' '),
             agencia_conta_favorecido=line[23:43].strip(' '),
             nome_favorecido=line[43:73].strip(' '),
             nro_doc=line[73:93].strip(' '),
             data_prevista_pag=format_date(line[93:101].strip(' ')),
             tipo_moeda=line[101:104].strip(' '),
-            #complemento=line[104:119],
+            # complemento=line[104:119],
             valor_previsto=format_currency(line[119:134].strip(' ')),
             nosso_numero=line[134:149].strip(' '),
-            #complemento=line[149:154],
+            # complemento=line[149:154],
             data_real_pagto=line[154:162].strip(' '),
             valor_real_pagto=line[162:177].strip(' '),
             nro_nota_fiscal=line[177:191].strip(' '),
-            #complemento=line[191:197],
+            # complemento=line[191:197],
             nro_doc_ted_op=line[197:203].strip(' '),
-            cnpj_cpf_favorecido=line[203:217].strip(' '),
-            tipo_identificacao_favorecido=line[217:218].strip(' '),
-            #complemento=line[218:229],
+            cnpj_cpf_favorecido=document,
+            tipo_inscricao=type_doc,
+            # complemento=line[218:229],
             aviso_ao_favorecido=line[229:230].strip(' '),
             codigo_ocorrencias=line[230:240].strip(' '),
         )

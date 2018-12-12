@@ -38,7 +38,7 @@ def test_header_not_implemented(cnab240_not_implemented):
 def test_header(cnab240):
     data = '21200000         29999999999999929                  00001 0000009999999 xxxxxxxxxxxxxxxxxxxx          BANCO ORIGINAL                          114092018000000001212100                                                                          '
     expect = SimpleNamespace(
-        cnpj='99999999999999',
+        cnpj_cpf='99999999999999',
         codigo_banco='212',
         codigo_lote='0000',
         dac_agencia='',
@@ -50,7 +50,7 @@ def test_header(cnab240):
         nro_agencia_debitada='00001',
         nro_conta_debitada='000000999999',
         tipo_arquivo='1',
-        tipo_doc='2',
+        tipo_inscricao='2',
         tipo_registro='0',
         versao_layout=''
     )
@@ -66,7 +66,7 @@ def test_header_lote(cnab240):
     data = '21200011C2041045 200000000000000                    00001 0000009474544 xxxxxxxxxxxxxxxxxxxx                                                                                                                                                    '
     expect = SimpleNamespace(cep='',
                              cidade='',
-                             cnpj='00000000000000',
+                             cnpj_cpf='00000000000000',
                              codigo_banco='212',
                              codigo_lote='0001',
                              complemento='',
@@ -114,7 +114,7 @@ def test_record_a(cnab240):
                              nro_nota_fiscal='',
                              nro_registro='00002',
                              segmento='A',
-                             tipo_identificacao_favorecido='2',
+                             tipo_inscricao='2',
                              tipo_moeda='BRL',
                              tipo_movimento='0',
                              tipo_registro='3',

@@ -8,7 +8,7 @@ from decimal import Decimal
 def test_header():
     data = '21200000         29999999999999929                  00001 0000009999999 xxxxxxxxxxxxxxxxxxxx          BANCO ORIGINAL                          114092018000000001212100                                                                          '
     expect = SimpleNamespace(
-        cnpj='99999999999999',
+        cnpj_cpf='99999999999999',
         codigo_banco='212',
         codigo_lote='0000',
         dac_agencia='',
@@ -20,18 +20,32 @@ def test_header():
         nro_agencia_debitada='00001',
         nro_conta_debitada='000000999999',
         tipo_arquivo='1',
-        tipo_doc='2',
+        tipo_inscricao='2',
         tipo_registro='0',
         versao_layout=''
     )
     assert Original().header(data) == expect
 
 
+def test_header_type_document_1():
+    data = '21200000         10001999999999929                  00001 0000009999999 xxxxxxxxxxxxxxxxxxxx          BANCO ORIGINAL                          114092018000000001212100                                                                          '
+    process = Original().header(data)
+    assert process.tipo_inscricao == '1'
+    assert process.cnpj_cpf == '19999999999'
+
+
+def test_header_type_document_2():
+    data = '21200000         20999999999999929                  00001 0000009999999 xxxxxxxxxxxxxxxxxxxx          BANCO ORIGINAL                          114092018000000001212100                                                                          '
+    process = Original().header(data)
+    assert process.tipo_inscricao == '2'
+    assert process.cnpj_cpf == '09999999999999'
+
+
 def test_header_lote():
     data = '21200011C2041045 200000000000000                    00001 0000009474544 xxxxxxxxxxxxxxxxxxxx                                                                                                                                                    '
     expect = SimpleNamespace(cep='',
                              cidade='',
-                             cnpj='00000000000000',
+                             cnpj_cpf='00000000000000',
                              codigo_banco='212',
                              codigo_lote='0001',
                              complemento='',
@@ -56,6 +70,20 @@ def test_header_lote():
     assert Original().header_lote(data) == expect
 
 
+def test_header_lote_type_document_1():
+    data = '21200011C2041045 100000000000000                    00001 0000009474544 xxxxxxxxxxxxxxxxxxxx                                                                                                                                                    '
+    process = Original().header_lote(data)
+    assert process.tipo_inscricao == '1'
+    assert process.cnpj_cpf == '00000000000'
+
+
+def test_header_lote_type_document_2():
+    data = '21200011C2041045 200000000000000                    00001 0000009474544 xxxxxxxxxxxxxxxxxxxx                                                                                                                                                    '
+    process = Original().header_lote(data)
+    assert process.tipo_inscricao == '2'
+    assert process.cnpj_cpf == '00000000000000'
+
+
 def test_record_a():
     data = '2120001300002A0     21200001 0000000659657 xxxxxxxxxxxxxxxxxxxxxxxxxxx   12122               17092018BRL               000000000050000                                                                     000000000000002                      '
     expect = SimpleNamespace(agencia_conta_favorecido='00001 0000000659657',
@@ -74,7 +102,7 @@ def test_record_a():
                              nro_nota_fiscal='',
                              nro_registro='00002',
                              segmento='A',
-                             tipo_identificacao_favorecido='2',
+                             tipo_inscricao='2',
                              tipo_moeda='BRL',
                              tipo_movimento='0',
                              tipo_registro='3',
@@ -83,3 +111,17 @@ def test_record_a():
                              )
 
     assert Original().record_a(data) == expect
+
+
+def test_record_a_type_document_1():
+    data = '2120001300002A0     21200001 0000000659657 xxxxxxxxxxxxxxxxxxxxxxxxxxx   12122               17092018BRL               000000000050000                                                                     000000000000001                      '
+    process = Original().record_a(data)
+    assert process.tipo_inscricao == '1'
+    assert process.cnpj_cpf_favorecido == '00000000000'
+
+
+def test_record_a_type_document_2():
+    data = '2120001300002A0     21200001 0000000659657 xxxxxxxxxxxxxxxxxxxxxxxxxxx   12122               17092018BRL               000000000050000                                                                     000000000000002                      '
+    process = Original().record_a(data)
+    assert process.tipo_inscricao == '2'
+    assert process.cnpj_cpf_favorecido == '00000000000000'
